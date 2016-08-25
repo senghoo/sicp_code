@@ -1,0 +1,6 @@
+(define (tree-map f t)
+  (define (iter t)
+    (if (pair? t)
+        (map square-tree2 t)
+        (f t)))
+  (iter t))
