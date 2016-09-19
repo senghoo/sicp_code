@@ -65,3 +65,32 @@
                        (deriv (base exp) var)))
         (else
          (error "unknown expression type: DERIV" exp))))
+
+
+(define (install-sum-package)
+  (put 'deriv '+
+       (lambda (exp var)
+         (make-sum (deriv (addend exp) var)
+                   (deriv (augend exp) var)))))
+
+(define (install-product-package)
+  (put 'deriv '*
+       (lambda (exp var)
+         (make-sum
+          (make-product (multiplier exp)
+                        (deriv (multiplicand exp) var))
+          (make-product (deriv (multiplier exp) var)
+                        (multiplicand exp))))))
+
+(define (install-exponentiation-package)
+  (put 'deriv '**
+       (lambda (exp var)
+         (let ((n (exponent exp))
+               (u (base exp)))
+           (make-product
+            n
+            (make-product
+             (make-exponentiation
+              u
+              (- n 1))
+             (deriv u var)))))))
